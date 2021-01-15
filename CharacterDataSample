@@ -1,0 +1,20 @@
+Name
+Level
+Class (array for multiclass?)
+Stats
+Inventory (array)
+Playtime
+CompletedDungeons (array)
+Spellslots/mana(?)
+PlayersKilled
+NpcsKilled
+MobsKilled
+BossesKilled
+ActiveInventory (array/object array?)
+InactiveInventory (array/object array?)
+Status (paralyzed, etc.)
+Cash
+CurrentLocation
+Guild
+Income
+DateOfCreation

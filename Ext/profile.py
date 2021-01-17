@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands
+import utils
 import os.path
 import json
 from datetime import date
 
 class Profile(commands.Cog):
-
+    
+    dataDir = "Data/"
 
     def __init__(self, bot):
         self.bot = bot
@@ -13,21 +15,39 @@ class Profile(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Extension "Profile" loaded')
-        print('------')
+        utils.extMessage("Profile")
 
     @commands.command()
     async def profile(self, ctx):
-        await ctx.send("test profile")
+        author = ctx.author
+        authorId = str(author.id)
+        server = str(ctx.guild.id)
+        serverDir = self.dataDir+server+"/"
+        authorDir = serverDir+authorId+".json"
+        output = ""
+
+        if os.path.isfile(authorDir):
+            print("User exists, proceeding to open JSON file of user "+authorId)
+            with open(authorDir) as json_file:
+
+                data = json.load(json_file)
+
+            #print(data)
+            #print (data["Characters"]["test"]["CreationDate"])
+            print("Loading user: "+data["UserData"]["Username"]+" (is admin? "+str(data["UserData"]["isAdmin"])+")")
+            print("Sending profile info about user "+authorId)
+            output = "Username: "+str(data["UserData"]["Username"])+"\nAdmin? "+str(data["UserData"]["isAdmin"])+"\nUser creation date: "+str(data["UserData"]["CreationDate"])
+            await utils.sendMessage(ctx, output)
+            print("------")
+            
 
     @commands.command()
     async def newCharacter(self, message, *args):
-        dataDir = "Data/"
         author = message.author
         authorId = str(author.id)
         server = str(message.guild.id)
         charName = ""
-        serverDir = dataDir+server+"/"
+        serverDir = self.dataDir+server+"/"
         authorDir = serverDir+authorId+".json"
         today = str(date.today())
 
@@ -50,8 +70,8 @@ class Profile(commands.Cog):
 
             #print(data)
             #print (data["Characters"]["test"]["CreationDate"])
-            print("Loading user: "+data["UserData"]["Username"]+" (is admin? "+str(data["UserData"]["isAdmin"])+").")
-
+            print("Loading user: "+data["UserData"]["Username"]+" (is admin? "+str(data["UserData"]["isAdmin"])+")")
+            print("Creating character: \""+charName+"\"")
 
             print("------")
 

@@ -52,6 +52,9 @@ class Profile(commands.Cog):
             #print (data["Characters"]["test"]["CreationDate"])
             print("Loading user: "+data["UserData"]["Username"]+" (is admin? "+str(data["UserData"]["isAdmin"])+").")
 
+
+            print("------")
+
         else:
             print("User does not exist, proceeding to create JSON file for user "+authorId)
             
@@ -64,8 +67,11 @@ class Profile(commands.Cog):
             "Characters": {
                 charName: { 
                     "Name": charName,
-                    "Level": 1,
-                    "CreationDate": today
+                    "CreationDate": today,
+                    "Lever": 1,
+                    "Stats": {
+                        "HP": 10
+                        }
                     }
                 }
             }

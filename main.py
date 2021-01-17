@@ -2,6 +2,7 @@ import os
 import json
 import discord
 from discord.ext import commands
+import utils
 
 with open("./config.json", "r") as configjsonFile:
     configData = json.load(configjsonFile)
@@ -20,6 +21,13 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+
+@bot.event
+async def on_command_error(ctx, error):
+    #if isinstance(error, CommandNotFound):
+    print(str(error)+" (server id: "+str(ctx.guild.id)+", user id: "+str(ctx.author.id)+")  ")
+    await ctx.send("Invalid command \""+ctx.message.content[1:]+"\"")
+    print("------")
 
 @bot.command()
 async def ping(ctx):

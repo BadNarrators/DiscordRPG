@@ -7,7 +7,7 @@ from datetime import date
 
 class Profile(commands.Cog):
     
-    dataDir = "Data/"
+    DATADIR = "Data/"
 
     def __init__(self, bot):
         self.bot = bot
@@ -15,14 +15,14 @@ class Profile(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        utils.extMessage("Profile")
+        utils.ext_message("Profile")
 
     @commands.command()
     async def profile(self, ctx):
         author = ctx.author
         authorId = str(author.id)
         server = str(ctx.guild.id)
-        serverDir = self.dataDir+server+"/"
+        serverDir = self.DATADIR+server+"/"
         authorDir = serverDir+authorId+".json"
         output = ""
 
@@ -36,8 +36,15 @@ class Profile(commands.Cog):
             #print (data["Characters"]["test"]["CreationDate"])
             print("Loading user: "+data["UserData"]["Username"]+" (is admin? "+str(data["UserData"]["isAdmin"])+")")
             print("Sending profile info about user "+authorId)
-            output = "Username: "+str(data["UserData"]["Username"])+"\nAdmin? "+str(data["UserData"]["isAdmin"])+"\nUser creation date: "+str(data["UserData"]["CreationDate"])
-            await utils.sendMessage(ctx, output)
+            #output = "Username: "+str(data["UserData"]["Username"])+"\nAdmin? "+str(data["UserData"]["isAdmin"])+"\nUser creation date: "+str(data["UserData"]["CreationDate"])
+            
+            embed=discord.Embed(title=str(data["UserData"]["Username"]), description="", color=utils.random_color())
+            if(data["UserData"]["isAdmin"]):
+                embed.add_field(name="Admin?", value=str(data["UserData"]["isAdmin"]), inline=False)
+            embed.add_field(name="User creation date", value=str(data["UserData"]["CreationDate"]), inline=False)
+
+            #await ctx.send(embed = embed)
+            await utils.send_message(ctx, embed)
             print("------")
             
 
@@ -47,7 +54,7 @@ class Profile(commands.Cog):
         authorId = str(author.id)
         server = str(message.guild.id)
         charName = ""
-        serverDir = self.dataDir+server+"/"
+        serverDir = self.DATADIR+server+"/"
         authorDir = serverDir+authorId+".json"
         today = str(date.today())
 

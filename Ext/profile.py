@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import os.path
 import json
+from datetime import date
 
 class Profile(commands.Cog):
 
@@ -12,7 +13,7 @@ class Profile(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Profile extension loaded')
+        print('Extension "Profile" loaded')
         print('------')
 
     @commands.command()
@@ -22,11 +23,13 @@ class Profile(commands.Cog):
     @commands.command()
     async def newCharacter(self, message, *args):
         dataDir = "Data/"
-        author = str(message.author.id)
+        author = message.author
+        authorId = str(author.id)
         server = str(message.guild.id)
         charName = ""
         serverDir = dataDir+server+"/"
-        authorDir = serverDir+author+".json"
+        authorDir = serverDir+authorId+".json"
+        today = str(date.today())
 
         #for arg in args:
             #charName = charName + " " + arg
@@ -34,7 +37,7 @@ class Profile(commands.Cog):
         charName = args[0]
 
         if os.path.isfile(authorDir):
-            print("User exists, proceeding to open JSON file of user "+author)
+            print("User exists, proceeding to open JSON file of user "+authorId)
             
             #with open(authorDir, 'r') as f:
             #    dataList = [json.loads(line[7:]) for line in f]
@@ -44,14 +47,26 @@ class Profile(commands.Cog):
             with open(authorDir) as json_file:
 
                 data = json.load(json_file)
-            print(data)
+
+            #print(data)
+            #print (data["Characters"]["test"]["CreationDate"])
+            print("Loading user: "+data["UserData"]["Username"]+" (is admin? "+str(data["UserData"]["isAdmin"])+").")
 
         else:
-            print("User does not exist, proceeding to create JSON file for user "+author)
+            print("User does not exist, proceeding to create JSON file for user "+authorId)
             
-            charData = {
-            charName: {
-                "Level": 1
+            userData = {
+            "UserData": {
+                "Username": author.name,
+                "CreationDate": today,
+                "isAdmin": False
+                },
+            "Characters": {
+                charName: { 
+                    "Name": charName,
+                    "Level": 1,
+                    "CreationDate": today
+                    }
                 }
             }
             #print(charData)
@@ -65,7 +80,7 @@ class Profile(commands.Cog):
                     if exc.errno != errno.EEXIST:
                         raise
             f = open(authorDir, "w")
-            f.write(json.dumps(charData))
+            f.write(json.dumps(userData))
             f.close()
             
             print("------")

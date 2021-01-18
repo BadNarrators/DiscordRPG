@@ -19,3 +19,9 @@ async def send_message(ctx, s):
 def random_color():
     color = random.randint(0, 0xffffff)
     return color
+
+#not working, have to investigate on old js code to check
+async def npc_message(ctx, npc, s):
+    embed=discord.Embed(title="test", description="test", color=random_color())
+    embed.set_author(name="Test")
+    await send_message(ctx, embed)

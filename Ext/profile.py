@@ -42,6 +42,13 @@ class Profile(commands.Cog):
             if(data["UserData"]["isAdmin"]):
                 embed.add_field(name="Admin?", value=str(data["UserData"]["isAdmin"]), inline=False)
             embed.add_field(name="User creation date", value=str(data["UserData"]["CreationDate"]), inline=False)
+            chars = "("
+            for key in data["Characters"]:
+                chars += key+", "
+            chars = chars[:-2]
+            chars += ")"
+            if(chars != ")"):
+                embed.add_field(name="Characters", value=chars, inline=False)
 
             #await ctx.send(embed = embed)
             await utils.send_message(ctx, embed)
@@ -75,10 +82,34 @@ class Profile(commands.Cog):
 
                 data = json.load(json_file)
 
-            #print(data)
-            #print (data["Characters"]["test"]["CreationDate"])
+
             print("Loading user: "+data["UserData"]["Username"]+" (is admin? "+str(data["UserData"]["isAdmin"])+")")
+            
+            currCharNames = []
+            for key in data["Characters"]:
+                currCharNames.append(key)
+            #print(currCharNames)
+
+            print("User currently has "+str(len(data["Characters"]))+" characters "+str(currCharNames))
             print("Creating character: \""+charName+"\"")
+
+            if charName not in data["Characters"].keys():
+                print("Name valid, proceeding with character creation")
+                data["Characters"][charName] = {
+                    "Name": charName,
+                    "CreationDate": today,
+                    "Level": 1,
+                    "Stats": {
+                        "HP": 10
+                        }
+                    }
+                f = open(authorDir, "w")
+                f.write(json.dumps(data))
+                f.close()
+                await utils.send_message(message, "Character "+charName+" created succesfully!")
+            else:
+                print("Error: character "+charName+" exists already")
+                await utils.send_message(message, "Invalid value: character with name \""+charName+"\" exists already.")
 
             print("------")
 
@@ -95,7 +126,7 @@ class Profile(commands.Cog):
                 charName: { 
                     "Name": charName,
                     "CreationDate": today,
-                    "Lever": 1,
+                    "Level": 1,
                     "Stats": {
                         "HP": 10
                         }
